@@ -21,3 +21,4 @@ C:\Users\user\Desktop\SQL\hw-30-04\MainApp\obj\Debug\net9.0\refint\MainApp.dll
 C:\Users\user\Desktop\SQL\hw-30-04\MainApp\obj\Debug\net9.0\MainApp.pdb
 C:\Users\user\Desktop\SQL\hw-30-04\MainApp\obj\Debug\net9.0\MainApp.genruntimeconfig.cache
 C:\Users\user\Desktop\SQL\hw-30-04\MainApp\obj\Debug\net9.0\ref\MainApp.dll
+C:\Users\user\Desktop\SQL\hw-30-04\MainApp\obj\Debug\net9.0\MainApp.sourcelink.json

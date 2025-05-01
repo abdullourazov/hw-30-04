@@ -9,4 +9,6 @@ public interface IScreeningService
     Screening AddScreening(Screening screening);
     Screening UpdateScreening(Screening screening);
     Screening DeleteScreening(int id);
+    List<Screening> GetAllScreeningsSortedByTime();
+
 }

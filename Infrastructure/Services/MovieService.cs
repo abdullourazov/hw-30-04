@@ -1,3 +1,5 @@
+using System.Data;
+using System.Security.Cryptography;
 using Domain;
 using Npgsql;
 
@@ -26,7 +28,7 @@ public class MovieService : IMovieService
                         director = reader.GetString(2),
                         year = reader.GetInt32(3),
                         duration = reader.GetInt32(4),
-                        genge = reader.GetString(5),
+                        genre = reader.GetString(5),
                         description = reader.GetString(6)
                     });
                 }
@@ -56,7 +58,7 @@ public class MovieService : IMovieService
                             director = reader.GetString(2),
                             year = reader.GetInt32(3),
                             duration = reader.GetInt32(4),
-                            genge = reader.GetString(5),
+                            genre = reader.GetString(5),
                             description = reader.GetString(6)
                         };
                     }
@@ -66,7 +68,7 @@ public class MovieService : IMovieService
         return null;
     }
 
-    
+
     public Movie UpdateMovie(Movie movie)
     {
         using (var connection = new NpgsqlConnection(connectionString))
@@ -77,7 +79,7 @@ public class MovieService : IMovieService
             director = @director,
             year = @year,
             duration = @duration,
-            genge = @genge,
+            genre = @genre,
             description = @description
             where id = @id
             ";
@@ -88,7 +90,7 @@ public class MovieService : IMovieService
                 command.Parameters.AddWithValue("@director", movie.director);
                 command.Parameters.AddWithValue("@year", movie.year);
                 command.Parameters.AddWithValue("@duration", movie.duration);
-                command.Parameters.AddWithValue("@genge", movie.genge);
+                command.Parameters.AddWithValue("@genre", movie.genre);
                 command.Parameters.AddWithValue("@description", movie.description);
                 command.Parameters.AddWithValue("@id", movie.id);
                 int result = command.ExecuteNonQuery();
@@ -116,27 +118,116 @@ public class MovieService : IMovieService
     }
 
     public Movie AddMovie(Movie movie)
-{
-    using (var connection = new NpgsqlConnection(connectionString))
     {
-        connection.Open();
-        var cmd = @"INSERT INTO movies (title, director, year, duration, genge, description)
-                    VALUES (@title, @director, @year, @duration, @genge, @description)";
-        using (var command = new NpgsqlCommand(cmd, connection))
+        using (var connection = new NpgsqlConnection(connectionString))
         {
-            command.Parameters.AddWithValue("@title", movie.title);
-            command.Parameters.AddWithValue("@director", movie.director);
-            command.Parameters.AddWithValue("@year", movie.year);
-            command.Parameters.AddWithValue("@duration", movie.duration);
-            command.Parameters.AddWithValue("@genge", movie.genge);
-            command.Parameters.AddWithValue("@description", movie.description);
+            connection.Open();
+            var cmd = @"INSERT INTO movies (title, director, year, duration, genre, description)
+                    VALUES (@title, @director, @year, @duration, @genre, @description)";
+            using (var command = new NpgsqlCommand(cmd, connection))
+            {
+                command.Parameters.AddWithValue("@title", movie.title);
+                command.Parameters.AddWithValue("@director", movie.director);
+                command.Parameters.AddWithValue("@year", movie.year);
+                command.Parameters.AddWithValue("@duration", movie.duration);
+                command.Parameters.AddWithValue("@genre", movie.genre);
+                command.Parameters.AddWithValue("@description", movie.description);
 
-            command.ExecuteNonQuery();
+                command.ExecuteNonQuery();
+            }
         }
+        return movie;
     }
-    return movie;
-}
+
+// task1
+    public List<Movie> GetMoviesByGenre(string genre)
+    {
+        using (var connection = new NpgsqlConnection(connectionString))
+        {
+            connection.Open();
+            var cmd = "select * from movies where genre = '@genre'";
+            using (var command = new NpgsqlCommand(cmd, connection))
+            {
+                command.Parameters.AddWithValue("@genre, genre");
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        movies.Add(new Movie
+                        {
+                            id = reader.GetInt32(0),
+                            title = reader.GetString(1),
+                            director = reader.GetString(2),
+                            year = reader.GetInt32(3),
+                            duration = reader.GetInt32(4),
+                            genre = reader.GetString(5),
+                            description = reader.GetString(6)
+                        });
+                    }
+                }
+            }
+        }
+        return movies;
+    }
+    // task2
+    public List<string> GetAllDirectors(string genre)
+    {
+        var directors = new List<string>();
+        using var connection = new NpgsqlConnection(connectionString);
+        var cmd = "select distinct director from movies;";
+        {
+            connection.Open();
+            using var command = new NpgsqlCommand(cmd, connection);
+            {
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    directors.Add(reader.GetString(0));
+                }
+                return directors;
+            }
+        }
+
+    }
+//task4
+    public List<Movie> GetAllMovieSortedByYear()
+    {
+        var years = new List<Movie>();
+        using (var connection = new NpgsqlConnection(connectionString))
+        {
+            connection.Open();
+            var cmd = "select * from movies where year = @year  order by year desc";
+            using (var command = new NpgsqlCommand(cmd, connection))
+            {
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Movie movie = new Movie
+                        {
+                            id = reader.GetInt32(0),
+                            title = reader.GetString(1),
+                            director = reader.GetString(2),
+                            year = reader.GetInt32(3),
+                            duration = reader.GetInt32(4),
+                            genre = reader.GetString(5),
+                            description = reader.GetString(6)
+                        };
+                        movies.Add(movie);
+                    }
+                }
+            }
+        }
+        return movies;
+    }
+    
 
 
 
 }
+
+
+
+
+
+

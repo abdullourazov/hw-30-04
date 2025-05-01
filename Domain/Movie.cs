@@ -7,6 +7,7 @@ public class Movie
     public string director { get; set; }    
     public int year { get; set; }
     public int duration { get; set; }
-    public string genge { get; set; }
+    public string genre { get; set; }
     public string description { get; set; }
+ 
 }
